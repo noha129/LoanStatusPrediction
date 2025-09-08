@@ -1,0 +1,116 @@
+:root {
+  --bg: #0b1020;
+  --card: #121936;
+  --muted: #a6b0cf;
+  --fg: #e7ecff;
+  --accent: #8aa1ff;
+  --accent-2: #5fe1b5;
+  --danger: #ff6b6b;
+  --border: rgba(255,255,255,0.08);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: radial-gradient(1200px 600px at 20% -10%, #1a2466 0%, transparent 60%),
+              radial-gradient(1200px 600px at 120% 120%, #0d6b57 0%, transparent 60%),
+              var(--bg);
+  color: var(--fg);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+}
+
+.container {
+  min-height: 100%;
+  display: grid;
+  place-items: center;
+  padding: 40px 16px;
+}
+
+.card {
+  width: 100%;
+  max-width: 820px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+  backdrop-filter: blur(6px);
+}
+
+h1 {
+  margin: 0 0 8px 0;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+.muted {
+  margin: 0 0 24px 0;
+  color: var(--muted);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+label {
+  display: grid;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+input, select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: #0f1630;
+  color: var(--fg);
+  outline: none;
+}
+
+input:focus, select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px rgba(138, 161, 255, 0.15);
+}
+
+.btn {
+  grid-column: 1 / -1;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #0b1020;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn:hover {
+  filter: brightness(1.05);
+}
+
+.result {
+  margin-top: 20px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: #0f1630;
+  border: 1px solid var(--border);
+}
+
+.result.error {
+  border-color: rgba(255, 107, 107, 0.5);
+  color: var(--danger);
+}
+
+.hidden { display: none; }
+
+@media (max-width: 860px) {
+  .grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 560px) {
+  .grid { grid-template-columns: 1fr; }
+}
