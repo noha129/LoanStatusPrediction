@@ -1,14 +1,35 @@
+# app.py
+import os
+import logging
 from flask import Flask, render_template, request
 import pandas as pd
 import pickle
 import joblib
-import os  # ✅ you were missing this import
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
-# Load artifacts
-model = pickle.load(open("model.pkl", "rb"))
-scaler = joblib.load("scaler.pkl")
+# Paths (use __file__ so it works inside container)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(BASE_DIR, "model.pkl")
+SCALER_PATH = os.path.join(BASE_DIR, "scaler.pkl")
+
+# Load artifacts (fail early with clear message if missing)
+try:
+    logger.info("Loading model from %s", MODEL_PATH)
+    model = pickle.load(open(MODEL_PATH, "rb"))
+except Exception as e:
+    logger.exception("Failed to load model.pkl: %s", e)
+    raise
+
+try:
+    logger.info("Loading scaler from %s", SCALER_PATH)
+    scaler = joblib.load(SCALER_PATH)
+except Exception as e:
+    logger.exception("Failed to load scaler.pkl: %s", e)
+    raise
 
 ENCODING = {
     'Gender': {'Male': 1, 'Female': 0},
@@ -33,21 +54,21 @@ def home():
         }
         df_new = pd.DataFrame([row])
 
-        # Encode categorical columns
+        # Encode
         for col, mapping in ENCODING.items():
             df_new[col] = df_new[col].map(mapping)
 
-        # Scale features
-        df_scaled = scaler.transform(df_new[FEATURE_ORDER])
+        # Ensure column order and shape
+        X = df_new[FEATURE_ORDER].values
 
-        # Predict
-        pred = model.predict(df_scaled)[0]
+        # Scale & Predict
+        X_scaled = scaler.transform(X)
+        pred = model.predict(X_scaled)[0]
         prediction_text = "Approved ✅" if pred == 1 else "Rejected ❌"
 
     return render_template("index.html", prediction_text=prediction_text)
 
-
-# ⚡ For local development only. Gunicorn will handle this in Railway.
+# Local dev only (Gunicorn will be used in production)
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=True)
