@@ -2,7 +2,7 @@ from flask import Flask, render_template, request
 import pandas as pd
 import pickle
 import joblib
-
+import os
 app = Flask(__name__)
 
 # Load artifacts
@@ -48,5 +48,6 @@ def home():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))  # Use Railway's port
     app.run(host="0.0.0.0", port=port)
+
 
 
