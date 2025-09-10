@@ -2,7 +2,8 @@ from flask import Flask, render_template, request
 import pandas as pd
 import pickle
 import joblib
-import os
+import os  # ✅ you were missing this import
+
 app = Flask(__name__)
 
 # Load artifacts
@@ -32,11 +33,11 @@ def home():
         }
         df_new = pd.DataFrame([row])
 
-        # Encode
+        # Encode categorical columns
         for col, mapping in ENCODING.items():
             df_new[col] = df_new[col].map(mapping)
 
-        # Scale
+        # Scale features
         df_scaled = scaler.transform(df_new[FEATURE_ORDER])
 
         # Predict
@@ -45,9 +46,8 @@ def home():
 
     return render_template("index.html", prediction_text=prediction_text)
 
+
+# ⚡ For local development only. Gunicorn will handle this in Railway.
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))  # Use Railway's port
-    app.run(host="0.0.0.0", port=port)
-
-
-
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=True)
